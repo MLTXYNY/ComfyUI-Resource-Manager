@@ -141,3 +141,12 @@ comfyui-asset-manager/
 
 - 删除操作均需两次点击确认；文件夹删除仅限空文件夹（有文件的文件夹会被后端拒绝）。
 - 服务与 ComfyUI 相互独立：ComfyUI 未运行时，素材浏览、参数读取、模型管理照常可用。
+
+## 开源许可
+
+本项目采用 **Apache License 2.0**（Copyright 2026 YNY MLTX）。
+
+允许：个人使用、修改、二次开发、发布、**商业使用与销售**、集成到商业软件。
+
+条件：分发（含衍生作品）时必须保留适用的版权 / 归属声明（Copyright 2026 YNY MLTX），
+并随分发附上许可证副本与 NOTICE 归属信息；修改过的文件需标明变更。详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。
