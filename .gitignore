@@ -1,0 +1,17 @@
+# 个人配置与数据（含本地绝对路径，勿提交）
+config.json
+notes.json
+
+# 内部记忆与运维文档（含本机路径细节）
+.ai-memory/
+OPERATIONS.md
+TECHNICAL.md
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 运行时临时目录
+_chrometmp/
+_tmp/

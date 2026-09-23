@@ -1,0 +1,11 @@
+{
+  "model_dirs": ["C:/ComfyUI/models"],
+  "output_dirs": ["C:/ComfyUI/output"],
+  "workflow_dirs": ["C:/ComfyUI/user/default/workflows"],
+  "output_excludes": [],
+  "series_filter": {
+    "pattern": "",
+    "exclude": []
+  },
+  "comfyui_host": "http://127.0.0.1:8188"
+}
