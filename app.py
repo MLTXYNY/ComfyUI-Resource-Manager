@@ -38,6 +38,7 @@ import json
 import mimetypes
 import os
 import random
+import sys
 import shutil
 import time
 import urllib.error
@@ -50,11 +51,21 @@ import storage
 
 COMFY_HOST = os.environ.get("COMFY_HOST", "http://127.0.0.1:8188").rstrip("/")
 PORT = int(os.environ.get("PORT", "8000"))
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMP_DIR = os.path.join(BASE_DIR, "_tmp")
+def _app_root():
+    """静态资源根目录：开发模式=脚本目录；打包 exe=PyInstaller 解压目录(_MEIPASS)。"""
+    if getattr(sys, "frozen", False):
+        return getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(sys.executable)))
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+BASE_DIR = _app_root()
+# 临时上传目录：打包后放 exe 所在目录（_MEIPASS 每次启动重置）
+TEMP_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(sys.executable)) if getattr(sys, "frozen", False) else BASE_DIR,
+    "_tmp")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__, static_folder=os.path.join(BASE_DIR, "static"), static_url_path="/static")
 
 _OBJECT_INFO_CACHE = {"ts": 0, "data": None}
 _OBJECT_INFO_TTL = 60

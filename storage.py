@@ -22,6 +22,7 @@ storage.py —— 模型与输出文件管理
 import hashlib
 import json
 import os
+import sys
 import re
 import shutil
 import struct
@@ -34,7 +35,15 @@ try:
 except Exception:
     psutil = None
 
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+def _data_root():
+    """数据/配置文件根目录：开发模式=脚本目录；打包 exe=exe 所在目录（用户可写）。
+    避免 config.json / notes.json / 缓存写入 PyInstaller 临时解压目录（每次启动会丢失）。"""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(os.path.abspath(sys.executable))
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+CONFIG_PATH = os.path.join(_data_root(), "config.json")
 
 MODEL_EXTS = {".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".sft", ".gguf", ".onnx", ".engine"}
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".avif"}
@@ -101,7 +110,7 @@ _notes_lock = threading.Lock()
 
 
 def load_notes():
-    np = os.path.join(os.path.dirname(os.path.abspath(__file__)), "notes.json")
+    np = os.path.join(_data_root(), "notes.json")
     try:
         with open(np, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -116,7 +125,7 @@ def save_note(path, note):
             notes[path] = note.strip()
         else:
             notes.pop(path, None)
-        np = os.path.join(os.path.dirname(os.path.abspath(__file__)), "notes.json")
+        np = os.path.join(_data_root(), "notes.json")
         with open(np, "w", encoding="utf-8") as f:
             json.dump(notes, f, ensure_ascii=False, indent=2)
         return notes.get(path)
@@ -548,7 +557,7 @@ def list_output_folders(limit=4000):
 # 缩略图
 # --------------------------------------------------------------------------- #
 def _thumb_cache_dir():
-    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_tmp", "thumbs")
+    d = os.path.join(_data_root(), "_tmp", "thumbs")
     os.makedirs(d, exist_ok=True)
     return d
 
@@ -1154,7 +1163,7 @@ def _types_from_ui(ui):
 
 
 def _wf_cache_path():
-    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_tmp")
+    d = os.path.join(_data_root(), "_tmp")
     os.makedirs(d, exist_ok=True)
     return os.path.join(d, "wf_ref_cache.json")
 

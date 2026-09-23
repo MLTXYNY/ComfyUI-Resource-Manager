@@ -15,3 +15,8 @@ __pycache__/
 # 运行时临时目录
 _chrometmp/
 _tmp/
+
+# PyInstaller 构建产物（发布时手动上传 Release，不入库）
+build/
+dist/
+*.spec
