@@ -26,6 +26,8 @@
 
 ## 安装与启动
 
+**方式一：命令行启动（跨平台）**
+
 ```bash
 cd comfyui-asset-manager
 pip install -r requirements.txt
@@ -34,7 +36,15 @@ python app.py
 
 浏览器打开 http://127.0.0.1:8000 即可使用。
 
-Windows 用户也可直接双击项目内的 **`启动服务.bat`**（自动起服务并打开浏览器）/ **`停止服务.bat`**（结束服务进程）。
+**方式二：Windows 一键脚本（Windows 用户推荐）**
+
+直接双击项目内的 **`启动服务.bat`**，脚本会自动：
+
+1. 检测 Python（优先 `py`，其次 `python` / `python3`）；
+2. 首次运行自动安装依赖（`pip install -r requirements.txt`，已装则跳过）；
+3. 启动服务并自动打开浏览器 http://127.0.0.1:8000（已在运行则直接打开浏览器）。
+
+停止服务：双击 **`停止服务.bat`**（结束占用 8000 端口的服务进程，不影响 ComfyUI 本身）。
 
 > 首次启动若 `config.json` 不存在，界面目录为空：可在右上「目录设置」手动添加模型 / 输出 / 工作流目录，
 > 或参考 `config.example.json` 复制为 `config.json` 后按需修改。
