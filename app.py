@@ -239,6 +239,11 @@ def comfyui_host_set():
     return jsonify({"host": storage.set_comfy_host(host)})
 
 
+@app.route("/api/resource")
+def api_resource():
+    return jsonify(storage.collect_resource())
+
+
 @app.route("/api/health")
 def health():
     try:

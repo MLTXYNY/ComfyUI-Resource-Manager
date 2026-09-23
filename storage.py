@@ -16,6 +16,11 @@ import subprocess
 import threading
 import time
 
+try:
+    import psutil
+except Exception:
+    psutil = None
+
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 MODEL_EXTS = {".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".sft", ".gguf", ".onnx", ".engine"}
@@ -970,6 +975,38 @@ def _ffmpeg_path():
         if c and os.path.isfile(c):
             return c
     return None
+
+
+def collect_resource():
+    """采集系统资源快照：CPU / RAM 用 psutil，GPU / VRAM / 温度用 nvidia-smi。
+    GPU 不可用（无 nvidia-smi / 非 NVIDIA）时 gpus 为空列表，前端自动隐藏。"""
+    res = {"cpu": None, "ram": None, "gpus": []}
+    try:
+        if psutil is not None:
+            res["cpu"] = round(psutil.cpu_percent(interval=0.2), 1)
+            vm = psutil.virtual_memory()
+            res["ram"] = {"percent": round(vm.percent, 1),
+                          "used": vm.used, "total": vm.total}
+    except Exception:
+        pass
+    try:
+        out = subprocess.run(
+            ["nvidia-smi",
+             "--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=5)
+        for line in out.stdout.splitlines():
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) >= 4:
+                res["gpus"].append({
+                    "util": float(parts[0]),
+                    "mem_used": int(float(parts[1])),
+                    "mem_total": int(float(parts[2])),
+                    "temp": float(parts[3]),
+                })
+    except Exception:
+        pass
+    return res
 
 
 def _make_video_thumb(path, out_tmp, max_side=240):
